@@ -1,0 +1,113 @@
+#############################################################################
+# Makefile_src                                                              #
+#                                                                           #
+#  Common make file invoked by all test driver projects in dp directory    #
+#############################################################################
+#
+#
+#############################################################################
+#                                                                           #
+#   Copyright (C) 2010 Texas Instruments Incorporated                       #
+#     http://www.ti.com/                                                    #
+#                                                                           #
+#############################################################################
+# Use the main FASTMATH Rules.make for building apps in this directory
+ifndef MATHLIB_INSTALL_DIR
+    MATHLIB_INSTALL_DIR = ../../..
+endif
+
+include $(MATHLIB_INSTALL_DIR)/Rules.make
+
+#Set Target name
+TARGET = $(notdir $(CURDIR))
+CUR_DIR = "."
+
+# Comment this out if you want to see full compiler and linker output.
+VERBOSE = @
+
+export CODEGEN_INSTALL_DIR	
+
+#Linker command file used
+LFILE = $(TARGET).cmd
+INCLUDES = $(CODEGEN_INSTALL_DIR)/include 
+
+#Map file to be generated 
+MAP_FILE = $(BUILD_TYPE)/$(TARGET).map
+EXE = $(BUILD_TYPE)/$(TARGET).out
+
+#Set Compiler and Linker flags based on Configuration specified 
+ifeq ($(BUILD_TYPE), C674x)
+    LD_FLAGS 	+= -z -c -m $(MAP_FILE) -o$(EXE) -w -x -i $(CODEGEN_INSTALL_DIR)/lib 
+    C_FLAGS	+= -pdsw225 -o3 -fr"$(BUILD_TYPE)" -d"OVERRIDE_RTS=0" -d"__TI_EABI__=0" -mv6740
+endif
+ifeq ($(BUILD_TYPE), C67p)
+    C_FLAGS	+= -pdsw225 -o3 -fr"$(BUILD_TYPE)" -d"OVERRIDE_RTS=0" -d"__TI_EABI__=0" -mv67p 
+    LD_FLAGS 	+= -z -c -m $(MAP_FILE) -o$(EXE) -w -x -i $(CODEGEN_INSTALL_DIR)/lib
+endif
+ifeq ($(BUILD_TYPE), C67x)
+    C_FLAGS	+= -pdsw225 -o3 -fr"$(BUILD_TYPE)" -d"OVERRIDE_RTS=0" -d"__TI_EABI__=0" -mv6700
+    LD_FLAGS 	+= -z -c -m $(MAP_FILE) -o $(EXE) -w -x -i $(CODEGEN_INSTALL_DIR)/lib
+endif
+ifeq ($(BUILD_TYPE), C674x_elf)
+    LD_FLAGS 	+= --abi=eabi -z -c -m $(MAP_FILE) -o$(EXE) -w -x -i $(CODEGEN_INSTALL_DIR)/lib 
+    C_FLAGS	+= --abi=eabi -pdsw225 -o3 -fr"$(BUILD_TYPE)" -d"OVERRIDE_RTS=0" -mv6740
+endif
+ifeq ($(BUILD_TYPE), C67p_elf)
+    C_FLAGS	+= --abi=eabi -pdsw225 -o3 -fr"$(BUILD_TYPE)" -d"OVERRIDE_RTS=0" -mv67p 
+    LD_FLAGS 	+= --abi=eabi -z -c -m $(MAP_FILE) -o$(EXE) -w -x -i $(CODEGEN_INSTALL_DIR)/lib
+endif
+ifeq ($(BUILD_TYPE), C67x_elf)
+    C_FLAGS	+= --abi=eabi -pdsw225 -o3 -fr"$(BUILD_TYPE)" -d"OVERRIDE_RTS=0" -mv6700
+    LD_FLAGS 	+= --abi=eabi -z -c -m $(MAP_FILE) -o $(EXE) -w -x -i $(CODEGEN_INSTALL_DIR)/lib
+endif
+
+#Set Compiler and Linker paths and flags for the build
+COMPILE.c = $(VERBOSE) $(CODEGEN_INSTALL_DIR)/bin/cl6x $(C_FLAGS)
+LINK.c = $(VERBOSE) $(CODEGEN_INSTALL_DIR)/bin/cl6x $(LD_FLAGS)
+
+# C Sources to be built
+SOURCES = $(wildcard *.c)
+
+#Assembly source files to be built
+ASMSRC  = $(wildcard *.asm)
+
+# Header to be included 
+HEADERS = $(wildcard *.h)
+
+#Object files to be built
+OBJFILES = $(SOURCES:%.c=$(BUILD_TYPE)/%.obj) $(ASMSRC:%.asm=$(BUILD_TYPE)/%.obj)
+
+#Build options
+.PHONY: clean install 
+
+all:	TARGET
+
+install:
+	@mkdir -p $(EXEC_DIR)
+	@echo Copying outfile $(TARGET).out from $(BUILD_TYPE)/
+	@install -m 755 $(BUILD_TYPE)/$(TARGET).out $(EXEC_DIR)/
+	@chmod -x $(EXEC_DIR)/*.out
+
+TARGET: $(BUILD_TYPE)/$(TARGET).out
+
+$(BUILD_TYPE)/$(TARGET).out:	$(OBJFILES) $(LFILE)
+	@echo
+	@echo Linking $@ from $^..
+	@echo $(LINK.c) -o $@ $^
+	$(LINK.c) -o $@ $^ 
+
+$(BUILD_TYPE)/%.obj: %.c $(HEADERS) 
+	@echo Compiling $@ from $<..
+	@echo $(COMPILE.c) -I$(INCLUDES)$<
+	@mkdir -p $(BUILD_TYPE)
+	@chmod 777 $(BUILD_TYPE)
+	$(COMPILE.c) -I$(INCLUDES) $<
+
+$(BUILD_TYPE)/%.obj: %.asm $(HEADERS) 
+	@echo Compiling $@ from $<..
+	@echo $(COMPILE.c) -I$(INCLUDES)$<
+	$(COMPILE.c) -I$(INCLUDES) $<
+
+clean:
+	@echo Removing generated files..
+	$(VERBOSE) -$(RM) -r $(BUILD_TYPE) *~ *.d .dep

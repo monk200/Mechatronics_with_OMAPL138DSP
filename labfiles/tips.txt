@@ -1,0 +1,320 @@
+
+Date 12/17/12  Example of what evironment variables should look like
+bootdelay=3
+baudrate=115200
+bootfile="uImage"
+ethaddr=00:08:ee:04:70:71
+bootcmd=sf probe 0;sf read 0xc0700000 0x80000 0x220000; bootm 0xc0700000
+filesize=19666C
+fileaddr=C0700000
+serverip=192.168.1.148
+ipaddr=192.168.1.54
+bootargs=clocksource=jiffies mem=48M console=ttyS1,115200n8 root=/dev/mmcblk0p2 rw rootdelay=3 ip=192.168.1.76:192.168.1.1:255.255.255.0
+stdin=serial
+stdout=serial
+stderr=serial
+ver=U-Boot 2009.11 (May 09 2011 - 15:34:46)
+
+setenv bootargs "clocksource=jiffies mem=48M console=ttyS1,115200n8 root=/dev/mmcblk0p2 rw rootdelay=3 ip=192.168.1.76:192.168.1.1:255.255.255.0"
+
+sf probe 0
+tftp 0xc0700000 uImage.14noIPV6.oneUARTandUSB
+sf erase 0x80000 0x220000
+sf write 0xC0700000 0x80000 0x220000
+
+
+Script for espeak on robot
+#!/bin/sh
+
+espeak -s 120 --stdout "$@" | aplay -D plughw:1,0
+or to speak to date
+date "+%_H %M, %A %B %e, %Y | espeak -s 120 --stdout | aplay -D plughw:1,0
+
+
+LINUX PROCESS KILL
+ps -ef
+kill -KILL OptitrackComm
+
+To use only UART0 (currently not used) and UART2 I did the following
+1.  in /etc/inittab changed ttyS2 to ttyS1
+2.  changed kernel command to
+setenv bootargs "clocksource=jiffies mem=32M console=ttyS1,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.76:192.168.1.1:255.255.255.0"
+or
+setenv bootargs "clocksource=jiffies mem=48M console=ttyS1,115200n8 root=/dev/mmcblk0p2 rw rootdelay=3 ip=192.168.1.75:192.168.1.1:255.255.255.0"
+
+setenv bootargs "clocksource=jiffies mem=48M console=ttyS1,115200n8 root=/dev/mmcblk0p2 rw rootdelay=3 ip=192.168.1.76:192.168.1.1:255.255.255.0"
+3.  Compiled the kernel with following options set to
+	Device Drivers-> Character Devices -> Serial Drivers ->  Maximum number = 2,  Number registered to 2
+	System Type ->  TI DaVinci Implementations ->  disable Reset unused clocks during boot
+	
+Edited board-da850-evm.c and changed
+static struct davinci_uart_config da850_evm_uart_config __initdata = {
+      .enabled_uarts = 0x3,
+};
+and
+static int __init da850_evm_console_init(void)
+{
+      return add_preferred_console("ttyS", 1, "115200");
+}
+Edited devices-da8xx.c  to
+static struct plat_serial8250_port da8xx_serial_pdata[] = {
+    {
+        .mapbase    = DA8XX_UART0_BASE,
+        .irq        = IRQ_DA8XX_UARTINT0,
+        .flags        = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST |
+                    UPF_IOREMAP | UPF_FIXED_TYPE,
+        .type        = PORT_AR7,
+        .iotype        = UPIO_MEM,
+        .regshift    = 2,
+    },
+//    {
+//        .mapbase    = DA8XX_UART1_BASE,
+//        .irq        = IRQ_DA8XX_UARTINT1,
+//        .flags        = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST |
+//                    UPF_IOREMAP | UPF_FIXED_TYPE,
+//        .type        = PORT_AR7,
+//        .iotype        = UPIO_MEM,
+//        .regshift    = 2,
+//    },
+    {
+        .mapbase    = DA8XX_UART2_BASE,
+        .irq        = IRQ_DA8XX_UARTINT2,
+        .flags        = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST |
+                    UPF_IOREMAP | UPF_FIXED_TYPE,
+        .type        = PORT_AR7,
+        .iotype        = UPIO_MEM,
+        .regshift    = 2,
+    },
+    {
+        .flags    = 0,
+    },
+};
+
+
+
+setserial -g /dev/ttyS[01]  did not try this
+dmesg | grep tty  ....to see what serial ports are active and their port address and IRQ
+
+setenv bootargs "clocksource=jiffies mem=32M console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.76:192.168.1.1:255.255.255.0"
+
+setenv bootargs "clocksource=jiffies mem=32M console=ttyS1,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.76:192.168.1.1:255.255.255.0"
+
+setenv bootargs "clocksource=jiffies mem=32M console=uart8250,mmio,0x1d0d000,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.76:192.168.1.1:255.255.255.0"
+Debugging wikis:
+http://processors.wiki.ti.com/index.php/DSP_BIOS_Debugging_Tips
+http://processors.wiki.ti.com/index.php/Checking_for_Stack_Overflow_using_Unified_Breakpoint_Manager
+
+
+setenv bootargs "clocksource=jiffies mem=48M console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.54:192.168.1.1:255.255.255.0"
+
+C:\dan\omapl138\omapBot\trunk\armubl-03.20.00.12-boot\ais-ubl-spi.bin
+
+C:\dan\omapl138\omapBot\trunk\arm_post_ubl\arm_post_ubl.bin
+
+add this to /etc/profile for QT libraries 
+export PATH PS1 OPIEDIR QPEDIR QTDIR EDITOR TERM
+export LD_LIBRARY_PATH=/usr/local/Trolltech/QtEmbedded-4.7.3-arm/lib
+Files that should be in this lib directory are all the libs from
+/usr/local/Trolltech/QtEmbedded-4.7.3-arm/lib
+and from
+/opt/CodeSourcery/Sourcery_G++_Lite/arm-none-linuxgnueabi/libc/armv4t/usr/lib
+currently I only copy the libstdc++.so.* (four files) files.  Could need more of these libs in future
+
+12-03-10  current bootargs  
+ethaddr=00:08:ee:03:5a:98
+bootdelay=3
+baudrate=115200
+autoload=no
+dspwake=no
+bootfile=uImage
+dnsip=128.174.111.224
+dnsip2=130.126.2.131
+bootargs=clocksource=jiffies mem=32M console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.50:192.168.1.1:255.255.255.0
+filesize=1BA9E0
+fileaddr=C0700000
+gatewayip=192.168.1.1
+netmask=255.255.255.0
+ipaddr=192.168.1.50
+serverip=192.168.1.148
+bootcmd=sf probe 0;sf read 0xc0700000 0x80000 0x1c0000; bootm 0xc0700000
+stdin=serial
+stdout=serial
+stderr=serial
+ver=U-Boot 2009.11 (May 03 2010 - 15:38:40)
+
+setenv bootargs "clocksource=jiffies mem=32M console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.54:192.168.1.1:255.255.255.0"
+
+setenv bootargs 'clocksource=jiffies mem=64M console=ttyS2,115200n8 root=/dev/mmcblk0p2 rw rootdelay=1 ip=192.168.1.50:192.168.1.1:255.255.255.0'
+setenv bootcmd "sf probe 0;sf read 0xc0700000 0x80000 0x220000; bootm 0xc0700000"
+
+sfFlash DSP program from Uboot
+in Uboot for tftpserver
+first turn off firewall on Linux machine
+sf probe 0
+tftp 0xc0700000 clkprufullandsmall.bin
+sf erase 0x700000 0x30000<-- size so up to 224K*1024--> 0x38000
+sf write 0xC0700000 0x700000 0x30000<-- or whatever size
+Also need to check where .hwi_vec is located and change the arm-ubl with that location in the spiboot.c file.  Also if the size of the DSP program has changed you need to increase size in CLK2BIN.cmd and in arm-ubl in spiboot.c
+arm-ubl is in  c:\CCStudio_v3.3\omapl138\armubl-03.20.00.05\spi
+make sure to switch build for SPI
+Then run under Texas Instruments AISgen for D800K002
+Select ARM and SPI1Flash Crystal 24 Mhz
+Select ubl-spi.out
+Select armubl-spi-ais.bin
+Generate AIS
+Flash AIS with spi-flash project.
+Depending you may want to flash the DSP first before updating armubl
+
+My Memory Map for SPI Flash
+0 ARMAIS
+64K UBOOT
+256K to 320K Environment variables
+512K to 2560K uImage 2048 long
+2560K to 5632K RamDisk 3072 long
+DSP code at 0x700000
+
+My Memory Map for SPI Flash  Updated 12/03/11   Added ARM program when no linux boot
+
+0K to 64K		0x0 to 0x10000			ARMAIS
+64K to 256K	0x10000 to 0x40000	 	UBOOT
+256K to 320K	0x40000 to 0x50000		Environment Variables
+320K to 512K	0x50000 to 0x80000		I think unused need to test
+512K to 2688K	0x80000 to 0x2A0000		uImage
+2688K to 6144K	0x2A0000 to 0x600000		unused
+6144K to 7168K	0x600000 to 0x700000		ARM program when linux told to not boot  (enter 6291456 in decimal)
+7168K to 8192K	0x700000 to 0x800000		DSP program
+
+apache2 - 2.2.14-r1.5
+installing packages on OMAPL138     opkg
+
+How to setup OmapL138 for static IP
+edit the /etc/network/interface file and change to
+# iface eth0 inet dhcp
+iface eth0 inet static
+        address 192.168.1.50  any address that the router does not dhcp
+        netmask 255.255.255.0
+        network 192.168.0.0
+        gateway 192.168.1.1
+
+
+
+on OmapL138  to mount USB drive
+now automatically mounted at /media/sda1
+
+on Omapl138 SD card
+mount /media/mmcblk0p1 /media/card
+
+in linux how to mount my lexar multi-card reader
+cat /proc/scsi/scsi to find the scsi bus of the reader
+then su as root
+then type echo "scsi add-single-device <bus> 0 0 2" > /proc/scsi/scsi
+
+
+in Uboot for tftpserver
+first turn off firewall on Linux machine
+setenv autoload no
+dhcp
+setenv serverip < ip address>
+sf prootrobe 0
+tftp 0xc0700000 uImage
+sf erase 0x80000 0x220000
+sf write 0xC0700000 0x80000 0x220000
+
+
+to install/remove packages use yum
+
+mounting SDcard after boot
+mount /dev/mmcblk1p1 /mnt/sdcard
+
+set date 
+date 051911062009
+
+to set RTC
+hwclock --set --date="5/19/09 16:45:00"
+
+
+if PC slow:
+=========
+hostname localhost.localdomain
+
+
+bootargs=console=ttyS2,115200n8 noinitrd rw ip=dhcp root=/dev/nfs nfsroot=128.174.115.92:/home/d-block/workdir/filesys,nolock mem=32M
+
+setenv bootargs 'mem=32M console=ttyS2,115200n8 root=/dev/ram0 rw initrd=0xc1180000,4M ip=192.168.1.103:192.168.1.1:255.255.255.0'
+
+setenv bootargs console=ttyS2,115200n8 noinitrd rw ip=dhcp root=/dev/nfs nfsroot=${nfshost}:${rootpath},nolock mem=32M
+
+setenv bootargs console=ttyS2,115200n8 noinitrd rw ip=192.168.1.102:192.168.1.1:255.255.255.0 root=/dev/nfs nfsroot=${nfshost}:${rootpath},nolock mem=32M
+
+setenv bootcmd 'sf probe 0;sf read 0xc0700000 0x1E0000 0x220000; bootm 0xc0700000'
+
+turn off firewall
+/etc/init.d/iptables status
+/etc/init.d/iptables stop
+
+turn on nfs
+sudo /etc/init.d/nfs start
+sudo /etc/init.d/nfslock start
+
+static ip for OMAP
+setenv bootargs 'mem=32M console=ttyS2,115200n8 root=/dev/ram0 rw initrd=0xc1180000,4M ip=192.168.1.104:192.168.1.1:255.255.255.0'
+or  but this did not work for some reason
+setenv bootargs 'mem=32M console=ttyS2,115200n8 root=/dev/ram0 rw initrd=0xc1180000,4M ip=${ipaddr}:${gatewayip}:${netmask}'
+
+
+To add stuff to ramdisk
+=======================
+first uncompress the ramdisk file:
+  gunzip ramdisk.gz
+that will create a ramdisk file
+to mount that on a folder you create (mkdir /tmp/r)
+  sudo mount ramdisk -o loop  /tmp/r
+go in and change your settings
+then
+  sudo umount /tmp/r
+to cleanly unmount the fs
+and then compress the file that contains it
+  gzip /tmp/ramdisk
+copy the new ramdisk in your /tftpboot folder
+
+
+To install a startup script:
+========================
+first write a script in /etc/init.d on the omap filesystem
+then make a link (symbolic) to it in /etc/rc.d/rcS.d
+ ln -s /etc/init.d/scriptname /etc/rc.d/rcS.d/S54myscript
+
+
+to mount an nfs export from your server:
+==================================
+find the server's ip address (ifconfig) e.g. 128.174.115.175 
+on omap:
+
+  mount 192.168.1.102:/home/d-block/workdir/filesys /mnt/nfs
+
+where /home/d-block/workdir/filesys is in your /etc/exports files on the
+server. also, the firewall should be off, and nfs started as above.
+
+
+to move around desktop
+====================
+alt-ctrl-arrowkeys (left/right)
+alt-F2 to enter a command (xterm, firefox)
+
+bootdelay=3
+baudrate=115200
+bootfile="uImage"
+ethaddr=00:0e:99:02:f2:50
+ipaddr=192.168.1.102
+nfshost=192.168.1.101
+rootpath=/home/d-block/workdir/filesys
+bootargs=console=ttyS2,115200n8 noinitrd rw ip=192.168.1.102:192.168.1.1:255.255.255.0 root=/dev/nfs nfsroot=192.168.1.101:/home/d-block/workdir/filesys,nolock mem=32M
+bootcmd=sf probe 0;sf read 0xc0700000 0x1E0000 0x220000; bootm 0xc0700000
+stdin=serial
+stdout=serial
+stderr=serial
+ver=U-Boot 1.3.3 (Apr 23 2009 - 17:32:00)
+
+
+
+http://narcissus.angstrom-distribution.org/deploy/da850-omapl138-evm/37289f/random-413d0043-image-da850-omapl138-evm.tar.gz

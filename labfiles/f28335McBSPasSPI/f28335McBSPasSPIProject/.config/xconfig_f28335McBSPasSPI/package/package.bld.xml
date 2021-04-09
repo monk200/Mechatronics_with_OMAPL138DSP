@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!--  This file conforms to the DTD xdc/bld/build.dtd -->
+<package name="xconfig_f28335McBSPasSPI" version="" producerId="undefined">
+    <units>
+    </units>
+    <sources>
+        <srcFile name="package/cfg/f28335McBSPasSPI_p28FP.c"/>
+    </sources>
+    <configscripts>
+        <srcFile name="C:/dan/omapl138/SE423_Sp20/LabRepo/labfiles/f28335McBSPasSPI/SYSBIOS/f28335McBSPasSPI.cfg"/>
+    </configscripts>
+    <makefiles>
+        <srcFile name="package.mak" src="package.bld"/>
+        <srcFile name="package/package.xdc.dep" src="package.xdc"/>
+        <srcFile name="package/cfg/f28335McBSPasSPI_p28FP.mak" src="package.bld"/>
+        <srcFile name="package/cfg/f28335McBSPasSPI_p28FP.o28FP.dep" src="package/cfg/f28335McBSPasSPI_p28FP.c"/>
+        <srcFile name="package/cfg/f28335McBSPasSPI_p28FP.dep" src="package/cfg/f28335McBSPasSPI_p28FP.cfg"/>
+        <srcFile name="package/cfg/f28335McBSPasSPI.x28FP.mak" src="package.bld"/>
+        <srcFile name="package/rel/xconfig_f28335McBSPasSPI.tar.dep" src="package/rel/xconfig_f28335McBSPasSPI.xdc.inc"/>
+    </makefiles>
+    <targets>
+        <target name="ti.targets.C28_float"
+            version="ti.targets.C28_float{1,0,17.6,0"
+            rawVersion="17.6.0"
+            platform="ti.platforms.sim28xx"
+            isa="28FP"
+            suffix="28FP"
+            rootDir="C:/CCStudio_v8/ccsv8/tools/compiler/ti-cgt-c2000_17.6.0.STS"
+            os="undefined"
+            rts="ti.targets.rts2800">
+            <model endian="little"
+                codeModel="undefined"
+                dataModel="large"/>
+        </target>
+    </targets>
+    <libraries>
+    </libraries>
+    <configurations>
+    <configuration name="f28335McBSPasSPI"
+        pname="f28335McBSPasSPI.p28FP"
+        target="ti.targets.C28_float"
+        platform="ti.platforms.tms320x28:TMS320F28335"
+        profile="release"
+        isPartial="false"
+        xCfgScript="package/cfg/f28335McBSPasSPI_p28FP.cfg"
+        xCfgPrefix="package/cfg/f28335McBSPasSPI_p28FP"
+        cfgScript="C:/dan/omapl138/SE423_Sp20/LabRepo/labfiles/f28335McBSPasSPI/SYSBIOS/f28335McBSPasSPI.cfg"
+        cfgArgs="null"
+        />
+    </configurations>
+    <executables>
+    <executable name="f28335McBSPasSPI"
+        pname="f28335McBSPasSPI.x28FP"
+        target="ti.targets.C28_float"
+        platform="ti.platforms.tms320x28:TMS320F28335"
+        profile="release"
+        xCfgScript="package/cfg/f28335McBSPasSPI_p28FP.cfg"
+        xCfgPrefix="package/cfg/f28335McBSPasSPI_p28FP"
+        cfgScript="C:/dan/omapl138/SE423_Sp20/LabRepo/labfiles/f28335McBSPasSPI/SYSBIOS/f28335McBSPasSPI.cfg"
+        cfgArgs="null"
+        />
+    </executables>
+    <tests>
+    <test exeName="f28335McBSPasSPI.x28FP"
+        args=""
+        groupName="f28335McBSPasSPI.x28FP"
+        refOutput="undefined"
+        refExitCode="0"
+        execArgs=""
+        />
+    </tests>
+    <releases relDir="package/rel/">
+    <release name="xconfig_f28335McBSPasSPI"
+        pname="xconfig_f28335McBSPasSPI.tar"
+        label="default"
+    >
+        <file name="package/package.bld.xml"/>
+        <file name="package/build.cfg"/>
+        <file name="package/package.xdc.inc"/>
+    </release>
+    </releases>
+    <repositories>
+    </repositories>
+</package>

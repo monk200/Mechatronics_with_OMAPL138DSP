@@ -1,0 +1,61 @@
+; Code Composer Project File, Version 2.0 (do not modify or remove this line)
+
+[Project Settings]
+ProjectDir="C:\LIB_work\c674x\fastrtsv3\src\sp\log10sp\"
+ProjectType=Executable
+CPUFamily=TMS320C67XX
+Tool="Compiler"
+Tool="CustomBuilder"
+Tool="DspBiosBuilder"
+Tool="Linker"
+Tool="XDC"
+Config="C674x"
+Config="C674x_elf"
+Config="C67p"
+Config="C67p_elf"
+Config="C67x"
+Config="C67x_elf"
+
+[Source Files]
+Source="log10sp.asm"
+Source="log10sp_c.c"
+Source="log10sp_d.c"
+Source="log10sp_v.c"
+Source="log10sp.cmd"
+
+["Compiler" Settings: "C674x"]
+Options=-pdsw225 -o3 -fr"$(Proj_dir)\C674x" -d"OVERRIDE_RTS=0" -d"__TI_EABI__=0" -mv6740
+
+["Compiler" Settings: "C674x_elf"]
+Options=-pdsw225 -o3 -fr"$(Proj_dir)\C674x_elf" -d"OVERRIDE_RTS=0" --abi=eabi -mv6740
+
+["Compiler" Settings: "C67p"]
+Options=-pdsw225 -o3 -fr"$(Proj_dir)\C67p" -d"OVERRIDE_RTS=0" -d"__TI_EABI__=0" -mv67p
+
+["Compiler" Settings: "C67p_elf"]
+Options=-pdsw225 -o3 -fr"$(Proj_dir)\C67p_elf" -d"OVERRIDE_RTS=0" --abi=eabi -mv67p
+
+["Compiler" Settings: "C67x"]
+Options=-pdsw225 -o3 -fr"$(Proj_dir)\C67x" -d"OVERRIDE_RTS=0" -d"__TI_EABI__=0" -mv6700
+
+["Compiler" Settings: "C67x_elf"]
+Options=-o3 -fr"$(Proj_dir)\C67x_elf" -d"OVERRIDE_RTS=0" -mv6700 --abi=eabi-pdsw225
+
+["Linker" Settings: "C674x"]
+Options=-c -m".\C674x\log10sp.map" -o".\C674x\log10sp.out" -w -x
+
+["Linker" Settings: "C674x_elf"]
+Options=-c -m".\C674x_elf\log10sp.map" -o".\C674x_elf\log10sp.out" -w -x
+
+["Linker" Settings: "C67p"]
+Options=-c -m".\C67p\log10sp.map" -o".\C67p\log10sp.out" -w -x
+
+["Linker" Settings: "C67p_elf"]
+Options=-c -m".\C67p_elf\log10sp.map" -o".\C67p_elf\log10sp.out" -w -x
+
+["Linker" Settings: "C67x"]
+Options=-c -m".\C67x\log10sp.map" -o".\C67x\log10sp.out" -w -x
+
+["Linker" Settings: "C67x_elf"]
+Options=-c -m".\C67x_elf\log10sp.map" -o".\C67x_elf\log10sp.out" -w -x
+

@@ -1,0 +1,24 @@
+1.  First create a new folder for your project.
+2.  Copy the three files UART.h, UARTFuncs.c and user_newproject.c to the new folder.  These 3 files are in the manualProject.zip file.
+3.  In the new folder rename user_newproject.c to any name that you wish ie.  user_DanHW1.c
+4.  Now go to CCS 5.1 and open up a new or existing Workspace.  
+5.  Select Project->New CCS Project    In the CCS Project window do the following:
+	i.	Decide on a project name, i.e. HW1Ex1
+	ii.	Output type "Executable"
+	iii.	Uncheck Use Default location and Browse for the folder where you copied the files in step 2.
+	iv.	In that folder create a New Folder to locate your project, i.e. HW1project, and make that the location for the project.
+	v.	Family:  MSP430
+	vi.	Variant:  MSP430Gxxx Family and MSP430G2553
+	vii.	Connection:  TI MSP430 USB1 (Default)
+	viii.	Finally select Empty Project and then click Finish
+6.  A simple main.c file is created for you but we will not use it.  In the CCS Project Explorer, explore your new project and right click on main.c and select Delete
+7.  Now add the two source files:  Right click on your new project and select Add Files..... 
+	i.	Find UARTFuncs.c and your user_<yourname>.c file  select both using the Ctrl key while clicking and then click Open
+	ii.	A File Operation Dialog will pop up and I suggest you select Link to files and check Create link locations relative to: PROJECT_LOC  Then OK
+8.  Now you should be able to Build and Debug your Project.	
+9.  One other thing you may want to do is change the default setting for the use of printf from minimal to full.  
+    This will allow you to print floats and longs.  
+	i.	Right click on your project and select Properties.
+	ii.	Then go to Build->MSP430 Compiler->Advanced Options->Library Function Assumptions
+	iii.	Here change Level of printf suppot required to full
+
